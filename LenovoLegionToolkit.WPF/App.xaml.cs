@@ -74,6 +74,8 @@ public partial class App
         if (Log.Instance.IsTraceEnabled)
             Log.Instance.Trace($"Flags: {flags}");
 
+        Compatibility.AddCustomModelPrefix(flags.CustomModelPrefix);
+
         EnsureSingleInstance();
 
         await LocalizationHelper.SetLanguageAsync(true);

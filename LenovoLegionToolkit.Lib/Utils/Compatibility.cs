@@ -25,6 +25,9 @@ public static partial class Compatibility
 
     private const string ALLOWED_VENDOR = "LENOVO";
 
+    private static readonly HashSet<string> _customModelsPrefixes = new(StringComparer.InvariantCultureIgnoreCase);
+    private static readonly object _customModelsPrefixesLock = new();
+
     private static readonly string[] AllowedModelsPrefix = [
         // Worldwide variants
         "17ACH",
@@ -75,6 +78,13 @@ public static partial class Compatibility
 
     private static MachineInformation? _machineInformation;
 
+    public static void AddCustomModelPrefix(string? prefix)
+    {
+        if (!string.IsNullOrWhiteSpace(prefix))
+            lock (_customModelsPrefixesLock)
+                _customModelsPrefixes.Add(prefix.Trim());
+    }
+
     public static Task<bool> CheckBasicCompatibilityAsync() => WMI.LenovoGameZoneData.ExistsAsync();
 
     public static async Task<(bool isCompatible, MachineInformation machineInformation)> IsCompatibleAsync()
@@ -87,7 +97,11 @@ public static partial class Compatibility
         if (!mi.Vendor.Equals(ALLOWED_VENDOR, StringComparison.InvariantCultureIgnoreCase))
             return (false, mi);
 
-        foreach (var allowedModel in AllowedModelsPrefix)
+        string[] customPrefixes;
+        lock (_customModelsPrefixesLock)
+            customPrefixes = [.. _customModelsPrefixes];
+
+        foreach (var allowedModel in AllowedModelsPrefix.Concat(customPrefixes))
             if (mi.Model.Contains(allowedModel, StringComparison.InvariantCultureIgnoreCase))
                 return (true, mi);
 

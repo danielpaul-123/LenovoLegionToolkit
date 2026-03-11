@@ -26,6 +26,7 @@ public class Flags
     public bool ProxyAllowAllCerts { get; }
     public bool DisableUpdateChecker { get; }
     public bool DisableConflictingSoftwareWarning { get; }
+    public string? CustomModelPrefix { get; }
 
     public Flags(IEnumerable<string> startupArgs)
     {
@@ -47,6 +48,7 @@ public class Flags
         ProxyAllowAllCerts = BoolValue(args, "--proxy-allow-all-certs");
         DisableUpdateChecker = BoolValue(args, "--disable-update-checker");
         DisableConflictingSoftwareWarning = BoolValue(args, "--disable-conflicting-software-warning");
+        CustomModelPrefix = StringValue(args, "--custom-model-prefix");
     }
 
     private static string[] LoadExternalArgs()
@@ -86,5 +88,6 @@ public class Flags
         $" {nameof(ProxyPassword)}: {ProxyPassword}," +
         $" {nameof(ProxyAllowAllCerts)}: {ProxyAllowAllCerts}," +
         $" {nameof(DisableUpdateChecker)}: {DisableUpdateChecker}, " +
-        $" {nameof(DisableConflictingSoftwareWarning)}: {DisableConflictingSoftwareWarning}";
+        $" {nameof(DisableConflictingSoftwareWarning)}: {DisableConflictingSoftwareWarning}," +
+        $" {nameof(CustomModelPrefix)}: {CustomModelPrefix}";
 }
